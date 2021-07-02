@@ -3,7 +3,9 @@
           <div class="recipe-item" @click="chooseRecipe">
                <div class="recipe-image">
                     <div class="overlay"></div>
-                    <img :src="recipe.image_url" :alt="recipe.title" class="img-fluid">
+                    <object :data="recipe.image_url" type="image/jpg" class="img-fluid">
+                         <img src="https://i.stack.imgur.com/y9DpT.jpg" :alt="recipe.title" class="img-fluid" />
+                    </object>
                </div>
 
                <div class="recipe-info pt-2">
@@ -80,6 +82,12 @@ export default {
      height: 65px;
      border-radius: 100%;
      object-fit: cover;
+}
+.recipe-image object {
+     width: 65px;
+     height: 65px;
+     border-radius: 100%;
+     object-fit: cover;
      margin-right: 30px;
 }
 .recipe-info {
@@ -93,7 +101,7 @@ export default {
      font-size: 0.8rem;
 }
 @media (max-width: 567px){
-     .recipe-image img {
+     .recipe-image object {
           margin-right: 20px;
      }
 }

@@ -1,75 +1,79 @@
 <template>
-     <base-spinner v-if="isLoading"></base-spinner>
+     <div>
+          <base-spinner v-if="isLoading"></base-spinner>
 
-     <base-dialog 
-          v-if="errorMessage" 
-          :errorMessage="errorMessage"
-          @close="closeDialog">
-     </base-dialog>
+          <base-dialog 
+               v-if="errorMessage" 
+               :errorMessage="errorMessage"
+               @close="closeDialog">
+          </base-dialog>
 
-     <div v-if="!isLoading && !errorMessage" class="container pt-lg-5">
-          <div class="row">
-               <div class="col-lg-6">
-                    <div class="recipe-image">
-                         <img :src="recipe.image_url" :alt="recipe.title">
-                    </div>
-               </div>
-
-               <div class="col-lg-6">
-                    <div class="recipe-details pt-5 pt-lg-0">
-                         <button class="btn-bookmark mb-1" @click="toggleBookmarks">
-                              <i :class="recipe.bookmarked? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                         </button>
-                         
-                         <h4>{{ formattedTitle }}</h4>
-
-                         <div class="row">
-                              <div class="col-12 col-sm-6 duration shadow-sm rounded-lg">
-                                   <i class="far fa-clock"></i>
-                                   <span class="ml-2">{{ recipe.cooking_time }} Minutes</span>
-                              </div>
-
-                              <div class="col-12 col-sm-6 serving shadow-sm rounded-lg">
-                                   <i class="fas fa-user-friends"></i>
-                                   <span class="ml-2 mr-4">{{ recipe.servings }} Servings</span>
-
-                                   <button @click="increaseServing" class="increase-servings-button">
-                                        <i class="fas fa-plus"></i>
-                                   </button>
-
-                                   <button @click="decreaseServing" class="decrease-servings-button">
-                                        <i class="fas fa-minus"></i>
-                                   </button>
-                              </div>
+          <div v-if="!isLoading && !errorMessage" class="container pt-lg-5">
+               <div class="row">
+                    <div class="col-lg-6">
+                         <div class="recipe-image">
+                              <object :data="recipe.image_url" type="image/jpg">
+                                   <img src="https://i.stack.imgur.com/y9DpT.jpg" :alt="recipe.title">
+                              </object>
                          </div>
+                    </div>
 
-                         <div class="ingredients">
-                              <h5>Ingredients</h5>
+                    <div class="col-lg-6">
+                         <div class="recipe-details pt-5 pt-lg-0">
+                              <button class="btn-bookmark mb-1" @click="toggleBookmarks">
+                                   <i :class="recipe.bookmarked? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                              </button>
+                              
+                              <h4>{{ formattedTitle }}</h4>
 
-                              <ul>
-                                   <div class="row">
-                                        <ingredient-item 
-                                             v-for="ingredient in recipe.ingredients" 
-                                             :key="ingredient"
-                                             :ingredient="ingredient">
-                                        </ingredient-item>
+                              <div class="row">
+                                   <div class="col-12 col-sm-6 duration shadow-sm rounded-lg">
+                                        <i class="far fa-clock"></i>
+                                        <span class="ml-2">{{ recipe.cooking_time }} Minutes</span>
                                    </div>
-                              </ul>
+
+                                   <div class="col-12 col-sm-6 serving shadow-sm rounded-lg">
+                                        <i class="fas fa-user-friends"></i>
+                                        <span class="ml-2 mr-4">{{ recipe.servings }} Servings</span>
+
+                                        <button @click="increaseServing" class="increase-servings-button">
+                                             <i class="fas fa-plus"></i>
+                                        </button>
+
+                                        <button @click="decreaseServing" class="decrease-servings-button">
+                                             <i class="fas fa-minus"></i>
+                                        </button>
+                                   </div>
+                              </div>
+
+                              <div class="ingredients">
+                                   <h5>Ingredients</h5>
+
+                                   <ul>
+                                        <div class="row">
+                                             <ingredient-item 
+                                                  v-for="ingredient in recipe.ingredients" 
+                                                  :key="ingredient"
+                                                  :ingredient="ingredient">
+                                             </ingredient-item>
+                                        </div>
+                                   </ul>
+                              </div>
                          </div>
                     </div>
                </div>
           </div>
-     </div>
 
-     <div class="direction" v-if="!isLoading && !errorMessage">
-          <h4>HOW TO COOK IT</h4>
+          <div class="direction" v-if="!isLoading && !errorMessage">
+               <h4>HOW TO COOK IT</h4>
 
-          <p>
-               This recipe was created and published by 
-               <span class="font-weight-bold">{{ recipe.publisher }}</span>. You can learn how to cook it in their website.
-          </p>
+               <p>
+                    This recipe was created and published by 
+                    <span class="font-weight-bold">{{ recipe.publisher }}</span>. You can learn how to cook it in their website.
+               </p>
 
-          <button @click="goToSourcePage">Learn Now</button>
+               <button @click="goToSourcePage">Learn Now</button>
+          </div>
      </div>
 </template>
 
@@ -192,10 +196,14 @@ export default {
 .container {
      color: #374151;
 }
-.recipe-image img {
-     width: 100%;
-     height: 300px;
-     object-fit: contain;
+.recipe-image {
+     text-align: center;
+}
+.recipe-image img, .recipe-image object {
+     width: 350px;
+     height: 350px;
+     object-fit: cover;
+     border-radius: 100%;
 }
 h4 {
      text-align: center;
@@ -265,9 +273,14 @@ h5 {
      padding: 8px 15px;
      border-radius: 100px; 
 }
-@media (max-width: 576) {
+@media (max-width: 576px) {
      .increase-servings-button, .decrease-servings-button {
           line-height: 1.1rem !important;
+     }
+}
+@media (max-width: 992px) {
+     .recipe-image {
+          margin-top: 20px;
      }
 }
 </style>
