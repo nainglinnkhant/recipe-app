@@ -4,7 +4,11 @@
                <div class="recipe-image">
                     <div class="overlay"></div>
                     <object :data="recipe.image_url" type="image/jpg" class="img-fluid">
-                         <img src="https://i.stack.imgur.com/y9DpT.jpg" :alt="recipe.title" class="img-fluid" />
+                         <img
+                              v-if="useFallback"
+                              src="https://i.stack.imgur.com/y9DpT.jpg"
+                              :alt="recipe.title" class="img-fluid"
+                         />
                     </object>
                </div>
 
@@ -18,7 +22,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -26,6 +30,14 @@ export default {
      setup(props) {
           const router = useRouter();
           const vw = ref(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0));
+
+          const useFallback = ref(false);
+
+          watchEffect(() => {
+               if(props.recipe) {
+                    useFallback.value = true;
+               }
+          })
 
           const formattedTitle = computed(function() {
                const recipeTitle = props.recipe.title.replaceAll('&amp;', 'and');
@@ -53,6 +65,7 @@ export default {
 
           return {
                formattedTitle,
+               useFallback,
                chooseRecipe
           };
      }

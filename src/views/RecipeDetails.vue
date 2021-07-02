@@ -13,7 +13,11 @@
                     <div class="col-lg-6">
                          <div class="recipe-image">
                               <object :data="recipe.image_url" type="image/jpg">
-                                   <img src="https://i.stack.imgur.com/y9DpT.jpg" :alt="recipe.title">
+                                   <img
+                                        v-if="useFallback"
+                                        src="https://i.stack.imgur.com/y9DpT.jpg"
+                                        :alt="recipe.title"
+                                   />
                               </object>
                          </div>
                     </div>
@@ -96,6 +100,7 @@ export default {
           const recipe = ref({});
           const ingredients = ref([]);
           const isLoading = ref(false);
+          const useFallback = ref(false);
 
           const bookmarkedRecipes = computed(() => store.getters.getBookmarks);
 
@@ -134,6 +139,7 @@ export default {
                     errorMessage.value = 'Sorry! This recipe is currently not available.';
                }
                isLoading.value = false;
+               useFallback.value = true;
           })();
 
           function controlServings(mode) {
@@ -186,7 +192,8 @@ export default {
                errorMessage,
                closeDialog,
                toggleBookmarks,
-               goToSourcePage
+               goToSourcePage,
+               useFallback
           };
      }
 }
@@ -272,11 +279,6 @@ h5 {
      color: #ffffff;
      padding: 8px 15px;
      border-radius: 100px; 
-}
-@media (max-width: 576px) {
-     .increase-servings-button, .decrease-servings-button {
-          line-height: 1.1rem !important;
-     }
 }
 @media (max-width: 992px) {
      .recipe-image {
