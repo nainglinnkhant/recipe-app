@@ -92,7 +92,7 @@ export default {
      border-radius: 100%;
      object-fit: cover;
 }
-.recipe-image object, .recipe-image img-placeholder {
+.recipe-image object {
      width: 65px;
      height: 65px;
      border-radius: 100%;

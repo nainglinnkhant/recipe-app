@@ -12,17 +12,12 @@
                <div class="row">
                     <div class="col-lg-6">
                          <div class="recipe-image">
-                              <object v-if="isImageReady" :data="recipe.image_url" type="image/jpg">
+                              <object :data="recipeImage" type="image/jpg">
                                    <img
                                         src="https://i.stack.imgur.com/y9DpT.jpg"
                                         :alt="recipe.title"
                                    />
                               </object>
-                              <img
-                                   v-else
-                                   src="https://i.stack.imgur.com/y9DpT.jpg"
-                                   :alt="recipe.title"
-                              />
                          </div>
                     </div>
 
@@ -104,7 +99,6 @@ export default {
           const recipe = ref({});
           const ingredients = ref([]);
           const isLoading = ref(false);
-          const isImageReady = ref(false);
 
           const bookmarkedRecipes = computed(() => store.getters.getBookmarks);
 
@@ -113,6 +107,10 @@ export default {
           const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
           const { errorMessage, closeDialog } = useCloseDialog(true);
+
+          const recipeImage = computed(() => {
+               return 'https:' + recipe.value.image_url.split(':')[1];
+          });
 
           (async function() {
                if(isAuthenticated.value) store.dispatch('fetchBookmarks');
@@ -143,7 +141,6 @@ export default {
                     errorMessage.value = 'Sorry! This recipe is currently not available.';
                }
                isLoading.value = false;
-               isImageReady.value = true;
           })();
 
           function controlServings(mode) {
@@ -197,7 +194,7 @@ export default {
                closeDialog,
                toggleBookmarks,
                goToSourcePage,
-               isImageReady
+               recipeImage
           };
      }
 }
