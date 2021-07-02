@@ -143,9 +143,7 @@ export default {
                     errorMessage.value = 'Sorry! This recipe is currently not available.';
                }
                isLoading.value = false;
-               setTimeout(() => {
-                    isImageReady.value = true;
-               }, 2000);
+               isImageReady.value = true;
           })();
 
           function controlServings(mode) {

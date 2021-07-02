@@ -3,19 +3,13 @@
           <div class="recipe-item" @click="chooseRecipe">
                <div class="recipe-image">
                     <div class="overlay"></div>
-                    <object v-if="isImageReady" :data="recipe.image_url" type="image/jpg" class="img-fluid">
+                    <object :data="recipeImage" type="image/jpg" class="img-fluid">
                          <img
                               src="https://i.stack.imgur.com/y9DpT.jpg"
                               :alt="recipe.title" 
                               class="img-fluid"
                          />
                     </object>
-                    <img
-                         v-else
-                         src="https://i.stack.imgur.com/y9DpT.jpg"
-                         :alt="recipe.title" 
-                         class="img-fluid img-placeholder"
-                    />
                </div>
 
                <div class="recipe-info pt-2">
@@ -28,7 +22,7 @@
 </template>
 
 <script>
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -37,13 +31,9 @@ export default {
           const router = useRouter();
           const vw = ref(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0));
 
-          const isImageReady = ref(false);
-
-          watchEffect(() => {
-               if(props.recipe) {
-                    isImageReady.value = true;
-               }
-          })
+          const recipeImage = computed(() => {
+               return  'https:' + props.recipe.image_url.split(':')[1];
+          });
 
           const formattedTitle = computed(function() {
                const recipeTitle = props.recipe.title.replaceAll('&amp;', 'and');
@@ -71,7 +61,7 @@ export default {
 
           return {
                formattedTitle,
-               isImageReady,
+               recipeImage,
                chooseRecipe
           };
      }
