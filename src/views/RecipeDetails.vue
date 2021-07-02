@@ -286,4 +286,12 @@ h5 {
           margin-top: 20px;
      }
 }
+@media (max-width: 576px) {
+     .recipe-image img, .recipe-image object {
+          width: 300px;
+          height: 300px;
+          object-fit: cover;
+          border-radius: 100%;
+     }
+}
 </style>
