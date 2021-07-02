@@ -35,7 +35,9 @@ export default {
 
           watchEffect(() => {
                if(props.recipe) {
-                    useFallback.value = true;
+                    setTimeout(() => {
+                         useFallback.value = true;
+                    }, 2000);
                }
           })
 

@@ -139,7 +139,9 @@ export default {
                     errorMessage.value = 'Sorry! This recipe is currently not available.';
                }
                isLoading.value = false;
-               useFallback.value = true;
+               setTimeout(() => {
+                    useFallback.value = true;
+               }, 2000);
           })();
 
           function controlServings(mode) {
