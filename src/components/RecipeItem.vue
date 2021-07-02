@@ -3,13 +3,19 @@
           <div class="recipe-item" @click="chooseRecipe">
                <div class="recipe-image">
                     <div class="overlay"></div>
-                    <object :data="recipe.image_url" type="image/jpg" class="img-fluid">
+                    <object v-if="isImageReady" :data="recipe.image_url" type="image/jpg" class="img-fluid">
                          <img
-                              v-if="useFallback"
                               src="https://i.stack.imgur.com/y9DpT.jpg"
-                              :alt="recipe.title" class="img-fluid"
+                              :alt="recipe.title" 
+                              class="img-fluid"
                          />
                     </object>
+                    <img
+                         v-else
+                         src="https://i.stack.imgur.com/y9DpT.jpg"
+                         :alt="recipe.title" 
+                         class="img-fluid img-placeholder"
+                    />
                </div>
 
                <div class="recipe-info pt-2">
@@ -31,13 +37,11 @@ export default {
           const router = useRouter();
           const vw = ref(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0));
 
-          const useFallback = ref(false);
+          const isImageReady = ref(false);
 
           watchEffect(() => {
                if(props.recipe) {
-                    setTimeout(() => {
-                         useFallback.value = true;
-                    }, 2000);
+                    isImageReady.value = true;
                }
           })
 
@@ -67,7 +71,7 @@ export default {
 
           return {
                formattedTitle,
-               useFallback,
+               isImageReady,
                chooseRecipe
           };
      }
@@ -98,7 +102,7 @@ export default {
      border-radius: 100%;
      object-fit: cover;
 }
-.recipe-image object {
+.recipe-image object, .recipe-image img-placeholder {
      width: 65px;
      height: 65px;
      border-radius: 100%;
