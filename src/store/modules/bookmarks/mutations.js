@@ -6,7 +6,6 @@ export default {
           state.bookmarkedRecipes = payload.bookmarks;
      },
      removeFromBookmarks(state, payload) {
-          const index = state.bookmarkedRecipes.findIndex(bookmark => bookmark.id === payload.id);
-          state.bookmarkedRecipes.splice(index, 1);
+          state.bookmarkedRecipes = state.bookmarkedRecipes.filter(bookmark => bookmark.id !== payload.recipeId);
      }
 }
