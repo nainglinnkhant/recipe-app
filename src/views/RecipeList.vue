@@ -2,20 +2,7 @@
      <div class="container">
           <div class="row">
                <div class="col-8">
-                    <div class="search-bar shadow-sm">
-                         <form @submit.prevent="submitForm">
-                              <input type="text"
-                                   class="form-control"
-                                   placeholder="Search recipes..."
-                                   v-model.trim="userInput"
-                              >
-
-                              <button class="d-none d-md-block btn btn-search shadow-sm">Search</button>
-                              <button class="d-block d-md-none btn btn-search-icon">
-                                   <i class="fas fa-search"></i>
-                              </button>
-                         </form>
-                    </div>
+                    <searchbar :userInput="userInput" @input-changed="changeInput" @form-submitted="submitForm" />
                </div>
 
                <div class="col-2 text-center">
@@ -28,25 +15,31 @@
                     <button 
                          v-if="!isAuthenticated" 
                          class="btn btn-login shadow-sm"
-                         @click="login">
+                         @click="login"
+                    >
                          Login
                     </button>
 
                     <button v-else 
                          class="btn btn-logout shadow-sm"
-                         @click="logout">
+                         @click="logout"
+                    >
                          Logout
                     </button>
                </div>
           </div>
 
-          <base-spinner v-if="isLoading" class="mt-5"></base-spinner>
+          <base-spinner v-if="isLoading"></base-spinner>
 
           <base-dialog 
                v-if="errorMessage" 
                :errorMessage="errorMessage"
                @close="closeDialog">
           </base-dialog>
+
+          <div v-if="!isLoading && !errorMessage && recipes?.length === 0">
+               <p class="text-center mt-5 pt-3">No recipes found.</p>
+          </div>
 
           <div class="recipe-list" v-if="!isLoading && !errorMessage">
                <div class="row">
@@ -65,35 +58,35 @@ import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import RecipeItem from '../components/RecipeItem.vue';
-import useCloseDialog from '../hooks/closeDialog.js';
+import Searchbar from '../components/Searchbar.vue';
+import useControlState from '../hooks/controlState.js';
 
 export default {
      components: {
-          RecipeItem
+          RecipeItem,
+          Searchbar
      },
      setup() {
           const store = useStore();
           const router = useRouter();
           const userInput = ref('');
-          const isLoading = ref(false);
 
           const recipes = computed(() => store.getters.getRecipes);
 
           const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
-          const { errorMessage, closeDialog } = useCloseDialog();
+          const { isLoading, errorMessage, sendRequest, closeDialog } = useControlState();
 
-          async function submitForm() {
-               if(!userInput.value) return;
+          function changeInput(input) {
+               userInput.value = input;
+          }
 
-               isLoading.value = true;
-               try {
-                    await store.dispatch('fetchRecipes', { userInput: userInput.value });
-               }    
-               catch(error) {
-                    errorMessage.value = `${error.message}.`;
-               }
-               isLoading.value = false;
+          function submitForm() {
+               const input = userInput.value.trim();
+
+               if(!input) return;
+
+               sendRequest(store.dispatch.bind(null, 'fetchRecipes', { userInput: input }));
           }
 
           function login() {
@@ -115,6 +108,7 @@ export default {
 
           return {
                userInput,
+               changeInput,
                submitForm,
                recipes,
                isLoading,
@@ -132,37 +126,16 @@ export default {
 <style scoped>
 .container {
      padding-top: 2rem;
+     color: #374151;
 }
-.search-bar {
-     position: relative;
-}
-.btn-search {
-     background: #ed8756;
-     color: #ffffff;
-     padding-left: 15px;
-     padding-right: 15px;
-     border-radius: 50px;
-     position: absolute;
-     right: 0;
-     top: 0;
-}
-.btn-search-icon {
-     position: absolute;
-     right: 0;
-     top: 0;
-}
-.form-control {
-     border-color: transparent;
-     border-radius: 50px;
-}
-.btn:focus, .form-control:focus {
+.btn:focus {
      border-color: transparent;
      box-shadow: 0 0 0 0;
 }
 i {
      color: #ed8756;
 }
-.search-bar, .btn-bookmarks, .btn-login, .btn-logout {
+.btn-bookmarks, .btn-login, .btn-logout {
      border-radius: 50px;
      color: #374151;
 }

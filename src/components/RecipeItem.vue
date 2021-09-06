@@ -13,7 +13,7 @@
                </div>
 
                <div class="recipe-info pt-2">
-                    <h4>{{ formattedTitle }}</h4>
+                    <h4>{{ trimmedTitle }}</h4>
 
                     <p>{{ recipe.publisher }}</p>
                </div>
@@ -22,45 +22,42 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { createSlug, getViewWidth, trimTitle } from '../utils/utils';
 
 export default {
      props: ['recipe'],
      setup(props) {
           const router = useRouter();
-          const vw = ref(Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0));
+          const viewWidth = ref(getViewWidth());
 
-          const recipeImage = computed(() => {
-               return  'https:' + props.recipe.image_url.split(':')[1];
+          const recipeImage = computed(() => 'https:' + props.recipe.image_url?.split(':')[1]);
+
+          const recipeTitle = computed(() => props.recipe.title?.replaceAll('&amp;', 'and'));
+
+          const trimmedTitle = computed(() => trimTitle(recipeTitle.value, viewWidth.value));
+
+          const resizeHandler = () => {
+               viewWidth.value = getViewWidth();
+          };
+
+          onMounted(() => {
+               window.addEventListener('resize', resizeHandler);
           });
 
-          const formattedTitle = computed(function() {
-               const recipeTitle = props.recipe.title.replaceAll('&amp;', 'and');
-               let maxLetter;
-               if(vw.value < 576) {
-                    maxLetter = 26;
-               } 
-               else if(vw.value >= 576 && vw.value < 768) {
-                    maxLetter = 43;
-               }
-               else {
-                    maxLetter = 20;
-               }
-
-               if(recipeTitle.length < maxLetter) {
-                    return recipeTitle;
-               }
-               return `${recipeTitle.slice(0, maxLetter).trim()}...`;
-          });
+          onUnmounted(() => {
+               window.removeEventListener('resize', resizeHandler);
+          })
 
           function chooseRecipe() {
                const recipeId = props.recipe.id;
-               router.push(`/${recipeId}?id=${recipeId}`);
+               const slugTitle = createSlug(recipeTitle.value)
+               router.push(`/${slugTitle}?id=${recipeId}`);
           }
 
           return {
-               formattedTitle,
+               trimmedTitle,
                recipeImage,
                chooseRecipe
           };

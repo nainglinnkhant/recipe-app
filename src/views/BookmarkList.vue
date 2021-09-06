@@ -2,13 +2,17 @@
      <div class="container">
           <h4>Bookmarks</h4>
 
-          <base-spinner v-if="isLoading" class="mt-5"></base-spinner>
+          <base-spinner v-if="isLoading"></base-spinner>
 
           <base-dialog 
                v-if="errorMessage" 
                :errorMessage="errorMessage"
-               @close="closeDialog">
+               @close="() => closeDialog(true)">
           </base-dialog>
+
+          <div v-if="!isLoading && !errorMessage && bookmarkedRecipes.length ===0">
+               <p class="text-center mt-5">You haven't added any recipe to bookmarks.</p>
+          </div>
 
           <div class="recipe-list" v-if="!isLoading && !errorMessage">
                <div class="row">
@@ -23,10 +27,10 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useStore } from 'vuex';
 import RecipeItem from '../components/RecipeItem.vue';
-import useCloseDialog from '../hooks/closeDialog.js';
+import useControlState from '../hooks/controlState.js';
 
 export default {
      components: {
@@ -34,21 +38,13 @@ export default {
      },
      setup() {
           const store = useStore();
-          const isLoading = ref(false);
 
           const bookmarkedRecipes = computed(() => store.getters.getBookmarks);
 
-          const { errorMessage, closeDialog } = useCloseDialog(true); 
+          const { isLoading, errorMessage, sendRequest, closeDialog } = useControlState();
 
-          (async function() {
-               isLoading.value = true;
-               try {
-                    await store.dispatch('fetchBookmarks');
-               }
-               catch(error) {
-                    errorMessage.value = error.message;
-               }
-               isLoading.value = false;
+          (function() {
+               sendRequest(store.dispatch.bind(null, 'fetchBookmarks'));
           })();
 
           return {
@@ -64,10 +60,10 @@ export default {
 <style scoped>
 .container {
      padding-top: 2rem;
+     color: #374151;
 }
 h4 {
      font-size: 1.125rem;
-     color: #374151;
 }
 .recipe-list {
      padding-top: 2rem;

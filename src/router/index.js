@@ -42,4 +42,12 @@ router.beforeEach((to, _, next) => {
      }
 });
 
+router.beforeEach((to, _, next) => {
+     if(to.path.includes('auth') && store.getters.isAuthenticated) {
+          next('/');
+     } else {
+          next();
+     }
+})
+
 export default router;

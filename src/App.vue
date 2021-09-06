@@ -9,12 +9,11 @@ export default {
      setup() {
           const store = useStore();     
      
-          (async function() {
-               const localId = localStorage.getItem('localId');
+          (function() {
+               const localId = localStorage.getItem('recipe-app-localId');
                if(!localId) return;
                
                store.dispatch('tryLogin', { localId: localId });
-               await store.dispatch('fetchBookmarks');
           })();     
      }
 }

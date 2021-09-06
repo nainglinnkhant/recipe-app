@@ -1,3 +1,5 @@
+import { sendRequest } from "../../../utils/utils";
+
 export default {
      state() {
           return {
@@ -13,31 +15,30 @@ export default {
           }
      },
      actions: {
-          async auth(context, payload) {
+          async auth(context, {email, password, authMode}) {
                let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=
                AIzaSyCWwIDdAoSa1_Bjv1iE4wWX6WRK9amszJo`;
 
-               if(payload.authMode === 'Login') {
+               if(authMode === 'Login') {
                     url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCWwIDdAoSa1_Bjv1iE4wWX6WRK9amszJo`;
                }
 
-               const response = await fetch(url, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                         email: payload.email,
-                         password: payload.password,
-                         returnSecureToken: true
-                    })
-               });
+               const errorMsg = authMode === 'Login' ? 'Invalid email or password!' : 'Your email is already used!';
 
-               const responseData = await response.json();
+               const responseData = await sendRequest(
+                    url, 
+                    {
+                         method: 'POST',
+                         body: JSON.stringify({
+                              email,
+                              password,
+                              returnSecureToken: true
+                         })
+                    },
+                    errorMsg
+               );
 
-               if(!response.ok) {
-                    const error = new Error(responseData.message);
-                    throw error;
-               }
-
-               localStorage.setItem('localId', responseData.localId);
+               localStorage.setItem('recipe-app-localId', responseData.localId);
                
                context.commit('auth', {
                     localId: responseData.localId
@@ -47,7 +48,7 @@ export default {
                context.commit('auth', payload);
           },
           logout(context) {
-               localStorage.removeItem('localId');
+               localStorage.removeItem('recipe-app-localId');
                context.commit('logout');
           }
      },

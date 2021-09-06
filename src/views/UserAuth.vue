@@ -1,6 +1,6 @@
 <template>
      <base-dialog v-if="isLoading" errorMessage="Authenticating.." fixed>
-          <base-spinner class="mt-2"></base-spinner>
+          <base-spinner class="mt-3"></base-spinner>
      </base-dialog>
 
      <base-dialog 
@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import useCloseDialog from '../hooks/closeDialog.js';
+import useControlState from '../hooks/controlState.js';
 
 export default {
      setup() {
@@ -52,38 +52,29 @@ export default {
           const password = ref('');
           const authMode = ref('Login');
           const invalid = ref(false);
-          const isLoading = ref(false);
 
           const store = useStore();
           const router = useRouter();
 
-          const { errorMessage, closeDialog } = useCloseDialog();
+          const isAuthenticated = computed(() => store.getters.isAuthenticated);
+
+          const { isLoading, errorMessage, sendRequest, closeDialog } = useControlState();
 
           async function submitForm() {
                if(email.value === '' || password.value.length < 6) {
                     invalid.value = true;
                     return;
                }
-               
-               isLoading.value = true;
-               try {
-                    await store.dispatch('auth', {
-                         email: email.value,
-                         password: password.value,
-                         authMode: authMode.value
-                    });
 
+               await sendRequest(store.dispatch.bind(null, 'auth', {
+                    email: email.value,
+                    password: password.value,
+                    authMode: authMode.value
+               }));
+               
+               if(isAuthenticated.value) {
                     router.replace('/');
                }
-               catch(error) {
-                    if(authMode.value === 'Signup') {
-                         errorMessage.value = 'Your email is already used!';
-                    }
-                    else {
-                         errorMessage.value = 'Invalid email or password!';
-                    }
-               }
-               isLoading.value = false;
           }
 
           function switchAuthMode() {
