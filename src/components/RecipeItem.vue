@@ -6,7 +6,7 @@
                     <object :data="recipeImage" type="image/jpg" class="img-fluid">
                          <img
                               src="https://i.stack.imgur.com/y9DpT.jpg"
-                              :alt="recipe.title" 
+                              :alt="trimmedTitle" 
                               class="img-fluid"
                          />
                     </object>
@@ -24,7 +24,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { createSlug, getViewWidth, trimTitle } from '../utils/utils';
+import { convertHTMLtoString, createSlug, getViewWidth, trimTitle } from '../utils/utils';
 
 export default {
      props: ['recipe'],
@@ -34,7 +34,7 @@ export default {
 
           const recipeImage = computed(() => 'https:' + props.recipe.image_url?.split(':')[1]);
 
-          const recipeTitle = computed(() => props.recipe.title?.replaceAll('&amp;', 'and'));
+          const recipeTitle = computed(() => convertHTMLtoString(props.recipe.title));
 
           const trimmedTitle = computed(() => trimTitle(recipeTitle.value, viewWidth.value));
 

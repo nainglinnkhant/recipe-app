@@ -47,6 +47,7 @@ import { computed } from '@vue/runtime-core';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import IngredientItem from './IngredientItem.vue';
+import { convertHTMLtoString } from '../utils/utils';
 
 export default {
      components: {
@@ -57,7 +58,7 @@ export default {
           const router = useRouter();
 
           const recipe = computed(() => store.getters.getRecipe);
-          const recipeTitle = computed(() => recipe.value.title?.replaceAll('&amp;', 'and'));
+          const recipeTitle = computed(() => convertHTMLtoString(recipe.value.title));
           const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
           function controlServings(mode) {

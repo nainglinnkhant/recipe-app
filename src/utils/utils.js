@@ -68,3 +68,9 @@ export const trimTitle = (title, viewWidth) => {
      }
      return `${title.slice(0, maxLetter).trim()}...`;
 };
+
+export const convertHTMLtoString = (html) => {
+     const text = document.createElement('textarea');
+     text.innerHTML = html;
+     return text.value;
+}

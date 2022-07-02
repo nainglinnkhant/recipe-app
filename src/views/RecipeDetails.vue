@@ -15,7 +15,7 @@
                               <object :data="recipeImage" type="image/jpg">
                                    <img
                                         src="https://i.stack.imgur.com/y9DpT.jpg"
-                                        :alt="recipe.title"
+                                        :alt="recipeTitle"
                                    />
                               </object>
                          </div>
@@ -47,6 +47,7 @@ import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import useControlState from '../hooks/controlState.js';
 import RecipeInfo from '../components/RecipeInfo.vue';
+import { convertHTMLtoString } from '../utils/utils.js';
 
 export default {
      components: {
@@ -59,6 +60,7 @@ export default {
           const recipe = computed(() => store.getters.getRecipe);
           const bookmarkedRecipes = computed(() => store.getters.getBookmarks);
           const isAuthenticated = computed(() => store.getters.isAuthenticated);
+          const recipeTitle = computed(() => convertHTMLtoString(recipe.value.title));
 
           const { isLoading, errorMessage, sendRequest, closeDialog } = useControlState();
 
@@ -88,7 +90,8 @@ export default {
                errorMessage,
                closeDialog,
                goToSourcePage,
-               recipeImage
+               recipeImage,
+               recipeTitle,
           };
      }
 }
