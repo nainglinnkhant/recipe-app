@@ -8,7 +8,7 @@
           
           <h4>{{ recipeTitle }}</h4>
 
-          <div class="row">
+          <div class="row ml-0 mr-0">
                <div class="col-12 col-sm-6 duration shadow-sm rounded-lg">
                     <i class="far fa-clock"></i>
                     <span class="ml-2">{{ recipe.cooking_time }} Minutes</span>
