@@ -12,12 +12,11 @@
                <div class="row">
                     <div class="col-lg-6">
                          <div class="recipe-image">
-                              <object :data="recipeImage" type="image/jpg">
-                                   <img
-                                        src="https://i.stack.imgur.com/y9DpT.jpg"
-                                        :alt="recipeTitle"
-                                   />
-                              </object>
+                              <Image
+                                   :id="recipeId"
+                                   :src="recipeImage"
+                                   :alt="recipeTitle"
+                              />
                          </div>
                     </div>
 
@@ -47,11 +46,13 @@ import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import useControlState from '../hooks/controlState.js';
 import RecipeInfo from '../components/RecipeInfo.vue';
+import Image from '../components/Image.vue';
 import { convertHTMLtoString } from '../utils/utils.js';
 
 export default {
      components: {
-          RecipeInfo
+          RecipeInfo,
+          Image,
      },
      setup() {
           const route = useRoute();
@@ -61,13 +62,14 @@ export default {
           const bookmarkedRecipes = computed(() => store.getters.getBookmarks);
           const isAuthenticated = computed(() => store.getters.isAuthenticated);
           const recipeTitle = computed(() => convertHTMLtoString(recipe.value.title));
+          const recipeId = computed(() => route.query.id);
 
           const { isLoading, errorMessage, sendRequest, closeDialog } = useControlState();
 
           const recipeImage = computed(() => 'https:' + recipe.value.image_url?.split(':')[1]);
 
           (async function() {
-               await sendRequest(store.dispatch.bind(null, 'fetchRecipe', { id: route.query.id }))
+               await sendRequest(store.dispatch.bind(null, 'fetchRecipe', { id: recipeId.value }))
 
                if(isAuthenticated.value) {
                     const bookmarkedIds = bookmarkedRecipes.value.map(bookmark => bookmark.id);
@@ -92,6 +94,7 @@ export default {
                goToSourcePage,
                recipeImage,
                recipeTitle,
+               recipeId,
           };
      }
 }
@@ -104,7 +107,7 @@ export default {
 .recipe-image {
      text-align: center;
 }
-.recipe-image img, .recipe-image object {
+.recipe-image img {
      width: 350px;
      height: 350px;
      object-fit: cover;
@@ -146,7 +149,7 @@ h4 {
      }
 }
 @media (max-width: 576px) {
-     .recipe-image img, .recipe-image object {
+     .recipe-image img {
           width: 300px;
           height: 300px;
           object-fit: cover;

@@ -3,16 +3,16 @@
           <div class="recipe-item" @click="chooseRecipe">
                <div class="recipe-image">
                     <div class="overlay"></div>
-                    <object :data="recipeImage" type="image/jpg" class="img-fluid">
-                         <img
-                              src="https://i.stack.imgur.com/y9DpT.jpg"
-                              :alt="trimmedTitle" 
-                              class="img-fluid"
-                         />
-                    </object>
+                    
+                    <Image
+                         :id="recipe.id"
+                         :src="recipeImage"
+                         :alt="trimmedTitle" 
+                         class="img-fluid"
+                    />
                </div>
 
-               <div class="recipe-info pt-2">
+               <div class="recipe-info">
                     <h4>{{ trimmedTitle }}</h4>
 
                     <p>{{ recipe.publisher }}</p>
@@ -24,10 +24,14 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import Image from '../components/Image.vue';
 import { convertHTMLtoString, createSlug, getViewWidth, trimTitle } from '../utils/utils';
 
 export default {
      props: ['recipe'],
+     components: {
+          Image,
+     },
      setup(props) {
           const router = useRouter();
           const viewWidth = ref(getViewWidth());
@@ -88,16 +92,13 @@ export default {
      height: 65px;
      border-radius: 100%;
      object-fit: cover;
-}
-.recipe-image object {
-     width: 65px;
-     height: 65px;
-     border-radius: 100%;
-     object-fit: cover;
      margin-right: 30px;
 }
 .recipe-info {
      color: #374151;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
 }
 .recipe-info h4 {
      font-weight: 400;
@@ -105,9 +106,10 @@ export default {
 }
 .recipe-info p {
      font-size: 0.8rem;
+     margin-bottom: 0;
 }
 @media (max-width: 567px){
-     .recipe-image object {
+     .recipe-image img {
           margin-right: 20px;
      }
 }

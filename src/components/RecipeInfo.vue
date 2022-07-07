@@ -1,8 +1,10 @@
 <template>
      <div class="recipe-details pt-5 pt-lg-0">
-          <button class="btn-bookmark mb-1" @click="toggleBookmarks">
-               <i :class="recipe.bookmarked? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-          </button>
+          <div class="bookmark-container">
+               <button class="btn-bookmark mb-1" @click="toggleBookmarks">
+                    <i :class="recipe.bookmarked? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+               </button>
+          </div>
           
           <h4>{{ recipeTitle }}</h4>
 
@@ -112,6 +114,11 @@ h4 {
      text-align: center;
      font-size: 1.125rem;
      margin-bottom: 2rem;
+}
+.bookmark-container {
+     width: 100%;
+     display: flex;
+     justify-content: flex-end;
 }
 .btn-bookmark {
      background: transparent;
